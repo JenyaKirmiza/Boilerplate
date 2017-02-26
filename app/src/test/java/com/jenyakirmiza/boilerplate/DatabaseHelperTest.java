@@ -48,7 +48,7 @@ public class DatabaseHelperTest {
         result.assertReceivedOnNext(ribots);
 
         Cursor cursor = mDatabaseHelper.getBriteDb()
-                .query("SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME);
+                .query("SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME_AUTHOR);
         assertEquals(2, cursor.getCount());
         for (Ribot ribot : ribots) {
             cursor.moveToNext();
@@ -65,7 +65,7 @@ public class DatabaseHelperTest {
         mDatabaseHelper.setRibots(ribots).subscribe();
 
         TestSubscriber<List<Ribot>> result = new TestSubscriber<>();
-        mDatabaseHelper.getRibots().subscribe(result);
+        mDatabaseHelper.getAuthors().subscribe(result);
         result.assertNoErrors();
         result.assertValue(ribots);
     }

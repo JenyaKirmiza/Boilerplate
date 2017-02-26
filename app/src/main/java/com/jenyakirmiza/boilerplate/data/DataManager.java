@@ -3,6 +3,8 @@ package com.jenyakirmiza.boilerplate.data;
 import com.jenyakirmiza.boilerplate.data.local.DatabaseHelper;
 import com.jenyakirmiza.boilerplate.data.local.PreferencesHelper;
 import com.jenyakirmiza.boilerplate.data.model.Author;
+import com.jenyakirmiza.boilerplate.data.model.Book;
+import com.jenyakirmiza.boilerplate.data.model.Chapter;
 import com.jenyakirmiza.boilerplate.data.remote.RibotsService;
 import com.jenyakirmiza.boilerplate.util.DatabaseFileManager;
 
@@ -51,8 +53,16 @@ public class DataManager {
     }
 
 
-    public Observable<List<Author>> getRibots() {
-        return mDatabaseHelper.getRibots().distinct();
+    public Observable<List<Author>> getAuthors() {
+        return mDatabaseHelper.getAuthors().distinct();
+    }
+
+    public Observable<List<Book>> getBooks(int authorId) {
+        return mDatabaseHelper.getBooks(authorId).distinct();
+    }
+
+    public Observable<List<Chapter>> getChapters(int bookId) {
+        return mDatabaseHelper.getChapter(bookId).distinct();
     }
 
 }

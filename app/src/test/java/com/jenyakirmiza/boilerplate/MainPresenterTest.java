@@ -48,35 +48,35 @@ public class MainPresenterTest {
     @Test
     public void loadRibotsReturnsRibots() {
         List<Ribot> ribots = TestDataFactory.makeListRibots(10);
-        when(mMockDataManager.getRibots())
+        when(mMockDataManager.getAuthors())
                 .thenReturn(Observable.just(ribots));
 
         mMainPresenter.loadRibots();
-        verify(mMockMainMvpView).showRibots(ribots);
+        verify(mMockMainMvpView).showAuthors(ribots);
         verify(mMockMainMvpView, never()).showRibotsEmpty();
         verify(mMockMainMvpView, never()).showError();
     }
 
     @Test
     public void loadRibotsReturnsEmptyList() {
-        when(mMockDataManager.getRibots())
+        when(mMockDataManager.getAuthors())
                 .thenReturn(Observable.just(Collections.<Ribot>emptyList()));
 
         mMainPresenter.loadRibots();
         verify(mMockMainMvpView).showRibotsEmpty();
-        verify(mMockMainMvpView, never()).showRibots(ArgumentMatchers.<Ribot>anyList());
+        verify(mMockMainMvpView, never()).showAuthors(ArgumentMatchers.<Ribot>anyList());
         verify(mMockMainMvpView, never()).showError();
     }
 
     @Test
     public void loadRibotsFails() {
-        when(mMockDataManager.getRibots())
+        when(mMockDataManager.getAuthors())
                 .thenReturn(Observable.<List<Ribot>>error(new RuntimeException()));
 
         mMainPresenter.loadRibots();
         verify(mMockMainMvpView).showError();
         verify(mMockMainMvpView, never()).showRibotsEmpty();
-        verify(mMockMainMvpView, never()).showRibots(ArgumentMatchers.<Ribot>anyList());
+        verify(mMockMainMvpView, never()).showAuthors(ArgumentMatchers.<Ribot>anyList());
     }
 
 }

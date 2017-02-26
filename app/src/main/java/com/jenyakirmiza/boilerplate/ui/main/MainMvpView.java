@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MainMvpView extends MvpView {
 
-    void showRibots(List<Author> ribots);
+    void showAuthors(List<Author> ribots);
 
     void showRibotsEmpty();
 

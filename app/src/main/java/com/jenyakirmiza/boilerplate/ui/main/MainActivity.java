@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     /***** MVP View methods implementation *****/
 
     @Override
-    public void showRibots(List<Author> ribots) {
+    public void showAuthors(List<Author> ribots) {
         mRibotsAdapter.setRibots(ribots);
         mRibotsAdapter.notifyDataSetChanged();
     }

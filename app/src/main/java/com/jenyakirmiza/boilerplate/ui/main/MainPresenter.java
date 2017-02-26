@@ -56,7 +56,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     private void observeDb(){
         RxUtil.unsubscribe(mSubscription);
 
-        mSubscription = mDataManager.getRibots()
+        mSubscription = mDataManager.getAuthors()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<List<Author>>() {
@@ -71,11 +71,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     }
 
                     @Override
-                    public void onNext(List<Author> ribots) {
-                        if (ribots.isEmpty()) {
+                    public void onNext(List<Author> authors) {
+                        if (authors.isEmpty()) {
                             getMvpView().showRibotsEmpty();
                         } else {
-                            getMvpView().showRibots(ribots);
+                            getMvpView().showAuthors(authors);
                         }
                     }
                 });

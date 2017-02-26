@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.jenyakirmiza.boilerplate.data.model.Author;
+import com.jenyakirmiza.boilerplate.data.model.Book;
+import com.jenyakirmiza.boilerplate.data.model.Chapter;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
@@ -44,7 +46,7 @@ public class DatabaseHelper {
 
         SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
 
-        boolean createSuccessful = db.insert(Db.RibotProfileTable.TABLE_NAME, null, values) > 0;
+        boolean createSuccessful = db.insert(Db.RibotProfileTable.TABLE_NAME_AUTHOR, null, values) > 0;
         db.close();
 
     }
@@ -56,9 +58,9 @@ public class DatabaseHelper {
                 if (subscriber.isUnsubscribed()) return;
                 BriteDatabase.Transaction transaction = mDb.newTransaction();
                 try {
-                    mDb.delete(Db.RibotProfileTable.TABLE_NAME, null);
+                    mDb.delete(Db.RibotProfileTable.TABLE_NAME_AUTHOR, null);
                     for (Ribot ribot : newRibots) {
-                        long result = mDb.insert(Db.RibotProfileTable.TABLE_NAME,
+                        long result = mDb.insert(Db.RibotProfileTable.TABLE_NAME_AUTHOR,
                                 Db.RibotProfileTable.toContentValues(ribot.profile()),
                                 SQLiteDatabase.CONFLICT_REPLACE);
                         if (result >= 0) subscriber.onNext(ribot);
@@ -74,14 +76,48 @@ public class DatabaseHelper {
 
 
 
-    public Observable<List<Author>> getRibots() {
-        return mDb.createQuery(Db.RibotProfileTable.TABLE_NAME,
-                "SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME)
+    public Observable<List<Author>> getAuthors() {
+        return mDb.createQuery(Db.RibotProfileTable.TABLE_NAME_AUTHOR,
+                "SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME_AUTHOR)
                 .mapToList(new Func1<Cursor, Author>() {
                     @Override
                     public Author call(Cursor cursor) {
+
                         return Author.create(Db.RibotProfileTable.parseCursor(cursor).name(),
-                                Db.RibotProfileTable.parseCursor(cursor).url());
+                                Db.RibotProfileTable.parseCursor(cursor).id());
+                    }
+                }).concatMap(new Func1<List<Author>, Observable<? extends List<Author>>>() {
+                    @Override
+                    public Observable<? extends List<Author>> call(List<Author> authors) {
+
+                        return null;
+                    }
+                });
+    }
+
+    public Observable<List<Book>> getBooks(int authorId) {
+        return mDb.createQuery(Db.RibotProfileTable.TABLE_NAME_BOOK,
+                "SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME_BOOK+" WHERE "+Db.RibotProfileTable.COLUMN_AUTHOR_ID+" = "+authorId)
+                .mapToList(new Func1<Cursor, Book>() {
+                    @Override
+                    public Book call(Cursor cursor) {
+
+                        return Book.create(Db.RibotProfileTable.parseBookCursor(cursor).title(),
+                                Db.RibotProfileTable.parseBookCursor(cursor).id());
+                    }
+                });
+    }
+
+    public Observable<List<Chapter>> getChapter(int bookId) {
+        return mDb.createQuery(Db.RibotProfileTable.TABLE_NAME_CHAPTER,
+                "SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME_CHAPTER+" WHERE "+Db.RibotProfileTable.COLUMN_BOOK_ID+" = "+bookId)
+                .mapToList(new Func1<Cursor, Chapter>() {
+                    @Override
+                    public Chapter call(Cursor cursor) {
+
+                        return Chapter.create(Db.RibotProfileTable.parseChapterCursor(cursor).title(),
+                                Db.RibotProfileTable.parseChapterCursor(cursor).content(),
+                                Db.RibotProfileTable.parseCursor(cursor).id());
                     }
                 });
     }
