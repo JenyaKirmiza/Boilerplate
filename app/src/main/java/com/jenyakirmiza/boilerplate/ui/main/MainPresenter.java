@@ -1,7 +1,7 @@
 package com.jenyakirmiza.boilerplate.ui.main;
 
 import com.jenyakirmiza.boilerplate.data.DataManager;
-import com.jenyakirmiza.boilerplate.data.model.Ribot;
+import com.jenyakirmiza.boilerplate.data.model.Author;
 import com.jenyakirmiza.boilerplate.injection.ConfigPersistent;
 import com.jenyakirmiza.boilerplate.ui.base.BasePresenter;
 import com.jenyakirmiza.boilerplate.util.RxUtil;
@@ -40,11 +40,26 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     public void loadRibots() {
         checkViewAttached();
+
+        if(!mDataManager.getPreferencesHelper().getFirstLoading()) {
+            mDataManager.syncRibots();
+            mDataManager.copyDatabaseFromAssets();
+            mDataManager.getPreferencesHelper().setFirstLoading();
+            observeDb();
+        }
+        else {
+            observeDb();
+        }
+
+    }
+
+    private void observeDb(){
         RxUtil.unsubscribe(mSubscription);
+
         mSubscription = mDataManager.getRibots()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<List<Ribot>>() {
+                .subscribe(new Subscriber<List<Author>>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -56,7 +71,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     }
 
                     @Override
-                    public void onNext(List<Ribot> ribots) {
+                    public void onNext(List<Author> ribots) {
                         if (ribots.isEmpty()) {
                             getMvpView().showRibotsEmpty();
                         } else {
@@ -66,4 +81,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 });
     }
 
+    public boolean isInitialized() {
+        if(!mDataManager.getPreferencesHelper().getFirstLoading()){
+            mDataManager.getPreferencesHelper().setFirstLoading();
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -3,63 +3,42 @@ package com.jenyakirmiza.boilerplate.data.local;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import java.util.Date;
-
-import com.jenyakirmiza.boilerplate.data.model.Name;
-import com.jenyakirmiza.boilerplate.data.model.Profile;
+import com.jenyakirmiza.boilerplate.data.model.Author;
 
 public class Db {
 
     public Db() { }
 
     public abstract static class RibotProfileTable {
-        public static final String TABLE_NAME = "ribot_profile";
-
-        public static final String COLUMN_EMAIL = "email";
-        public static final String COLUMN_FIRST_NAME = "first_name";
-        public static final String COLUMN_LAST_NAME = "last_name";
-        public static final String COLUMN_HEX_COLOR = "hex_color";
-        public static final String COLUMN_DATE_OF_BIRTH = "date_of_birth";
-        public static final String COLUMN_AVATAR = "avatar";
-        public static final String COLUMN_BIO = "bio";
+        public static final String TABLE_NAME = "AUTHOR";
+        public static final String COLUMN_NAME = "NAME";
+        public static final String COLUMN_URL = "URL";
+        public static final String COLUMN_IMAGE_URL = "image_url";
+        public static final String COLUMN_AUTHOR_DESCRIPTION = "author_description";
 
         public static final String CREATE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        COLUMN_EMAIL + " TEXT PRIMARY KEY, " +
-                        COLUMN_FIRST_NAME + " TEXT NOT NULL, " +
-                        COLUMN_LAST_NAME + " TEXT NOT NULL, " +
-                        COLUMN_HEX_COLOR + " TEXT NOT NULL, " +
-                        COLUMN_DATE_OF_BIRTH + " INTEGER NOT NULL, " +
-                        COLUMN_AVATAR + " TEXT, " +
-                        COLUMN_BIO + " TEXT" +
+                        COLUMN_NAME + " TEXT TEXT NOT NULL, " +
+                        COLUMN_URL + " TEXT NOT NULL "+
                 " ); ";
 
-        public static ContentValues toContentValues(Profile profile) {
+        public static ContentValues toContentValues(Author author) {
             ContentValues values = new ContentValues();
-            values.put(COLUMN_EMAIL, profile.email());
-            values.put(COLUMN_FIRST_NAME, profile.name().first());
-            values.put(COLUMN_LAST_NAME, profile.name().last());
-            values.put(COLUMN_HEX_COLOR, profile.hexColor());
-            values.put(COLUMN_DATE_OF_BIRTH, profile.dateOfBirth().getTime());
-            values.put(COLUMN_AVATAR, profile.avatar());
-            if (profile.bio() != null) values.put(COLUMN_BIO, profile.bio());
+            values.put(COLUMN_NAME, author.name());
+            values.put(COLUMN_URL, author.url());
+            //values.put(COLUMN_IMAGE_URL, author.imageUrl());
+            //values.put(COLUMN_AUTHOR_DESCRIPTION, author.authorDescription());
             return values;
         }
 
-        public static Profile parseCursor(Cursor cursor) {
-            Name name = Name.create(
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)));
-            long dobTime = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_DATE_OF_BIRTH));
+        public static Author parseCursor(Cursor cursor) {
+            Author author = Author.create(
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_URL))
+                    //cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL)),
+                     /*cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AUTHOR_DESCRIPTION)*/);
 
-            return Profile.builder()
-                    .setName(name)
-                    .setEmail(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)))
-                    .setHexColor(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HEX_COLOR)))
-                    .setDateOfBirth(new Date(dobTime))
-                    .setAvatar(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_AVATAR)))
-                    .setBio(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_BIO)))
-                    .build();
+            return author;
         }
     }
 }
