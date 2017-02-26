@@ -7,17 +7,15 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 
-import javax.inject.Inject;
-
-import rx.Observer;
-import rx.Subscription;
-import rx.schedulers.Schedulers;
-import timber.log.Timber;
 import com.jenyakirmiza.boilerplate.BoilerplateApplication;
-import com.jenyakirmiza.boilerplate.data.model.Ribot;
 import com.jenyakirmiza.boilerplate.util.AndroidComponentUtil;
 import com.jenyakirmiza.boilerplate.util.NetworkUtil;
 import com.jenyakirmiza.boilerplate.util.RxUtil;
+
+import javax.inject.Inject;
+
+import rx.Subscription;
+import timber.log.Timber;
 
 public class SyncService extends Service {
 
@@ -42,15 +40,14 @@ public class SyncService extends Service {
     public int onStartCommand(Intent intent, int flags, final int startId) {
         Timber.i("Starting sync...");
 
-        if (!NetworkUtil.isNetworkConnected(this)) {
+        /*if (!NetworkUtil.isNetworkConnected(this)) {
             Timber.i("Sync canceled, connection not available");
             AndroidComponentUtil.toggleComponent(this, SyncOnConnectionAvailable.class, true);
             stopSelf(startId);
             return START_NOT_STICKY;
-        }
+        }*/
 
-        RxUtil.unsubscribe(mSubscription);
-        mSubscription = mDataManager.syncRibots()
+        /*mSubscription = mDataManager.syncRibots()
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Observer<Ribot>() {
                     @Override
@@ -69,7 +66,29 @@ public class SyncService extends Service {
                     @Override
                     public void onNext(Ribot ribot) {
                     }
-                });
+                });*/
+        RxUtil.unsubscribe(mSubscription);
+
+        /*mSubscription=mDataManager.copyDatabaseFromAssets().
+                subscribeOn(Schedulers.io())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                        Timber.i("Synced successfully!");
+                        stopSelf(startId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.w(e, "Error syncing.");
+                        stopSelf(startId);
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean ribot) {
+                    }
+                });*/
 
         return START_STICKY;
     }

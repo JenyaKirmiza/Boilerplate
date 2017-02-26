@@ -1,6 +1,5 @@
 package com.jenyakirmiza.boilerplate.ui.main;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jenyakirmiza.boilerplate.R;
-import com.jenyakirmiza.boilerplate.data.model.Ribot;
+import com.jenyakirmiza.boilerplate.data.model.Author;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +19,14 @@ import butterknife.ButterKnife;
 
 public class RibotsAdapter extends RecyclerView.Adapter<RibotsAdapter.RibotViewHolder> {
 
-    private List<Ribot> mRibots;
+    private List<Author> mRibots;
 
     @Inject
     public RibotsAdapter() {
         mRibots = new ArrayList<>();
     }
 
-    public void setRibots(List<Ribot> ribots) {
+    public void setRibots(List<Author> ribots) {
         mRibots = ribots;
     }
 
@@ -40,11 +39,9 @@ public class RibotsAdapter extends RecyclerView.Adapter<RibotsAdapter.RibotViewH
 
     @Override
     public void onBindViewHolder(final RibotViewHolder holder, int position) {
-        Ribot ribot = mRibots.get(position);
-        holder.hexColorView.setBackgroundColor(Color.parseColor(ribot.profile().hexColor()));
-        holder.nameTextView.setText(String.format("%s %s",
-                ribot.profile().name().first(), ribot.profile().name().last()));
-        holder.emailTextView.setText(ribot.profile().email());
+        Author author = mRibots.get(position);
+        //holder.hexColorView.setBackgroundColor(Color.parseColor(ribot.profile().hexColor()));
+        holder.nameTextView.setText(author.name());
     }
 
     @Override

@@ -12,6 +12,7 @@ public abstract class Name implements Parcelable {
     public abstract String first();
     public abstract String last();
 
+
     public static Name create(String first, String last) {
         return new AutoValue_Name(first, last);
     }

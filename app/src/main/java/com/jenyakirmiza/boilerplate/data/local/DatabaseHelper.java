@@ -1,20 +1,19 @@
 package com.jenyakirmiza.boilerplate.data.local;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.jenyakirmiza.boilerplate.data.model.Ribot;
+import com.jenyakirmiza.boilerplate.data.model.Author;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -27,13 +26,30 @@ public class DatabaseHelper {
     public DatabaseHelper(DbOpenHelper dbOpenHelper) {
         SqlBrite.Builder briteBuilder = new SqlBrite.Builder();
         mDb = briteBuilder.build().wrapDatabaseHelper(dbOpenHelper, Schedulers.immediate());
+        this.mDbOpenHelper=dbOpenHelper;
     }
 
+    private DbOpenHelper mDbOpenHelper;
     public BriteDatabase getBriteDb() {
         return mDb;
     }
 
-    public Observable<Ribot> setRibots(final Collection<Ribot> newRibots) {
+    public void syncRibots(){
+
+        ContentValues values = new ContentValues();
+        values.put(Db.RibotProfileTable.COLUMN_NAME, "");
+        values.put(Db.RibotProfileTable.COLUMN_URL, "");
+        //values.put(Db.RibotProfileTable.COLUMN_IMAGE_URL, "");
+        //values.put(Db.RibotProfileTable.COLUMN_AUTHOR_DESCRIPTION, "");
+
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+
+        boolean createSuccessful = db.insert(Db.RibotProfileTable.TABLE_NAME, null, values) > 0;
+        db.close();
+
+    }
+
+    /*public Observable<Author> setRibots(final Collection<Ribot> newRibots) {
         return Observable.create(new Observable.OnSubscribe<Ribot>() {
             @Override
             public void call(Subscriber<? super Ribot> subscriber) {
@@ -54,15 +70,18 @@ public class DatabaseHelper {
                 }
             }
         });
-    }
+    }*/
 
-    public Observable<List<Ribot>> getRibots() {
+
+
+    public Observable<List<Author>> getRibots() {
         return mDb.createQuery(Db.RibotProfileTable.TABLE_NAME,
                 "SELECT * FROM " + Db.RibotProfileTable.TABLE_NAME)
-                .mapToList(new Func1<Cursor, Ribot>() {
+                .mapToList(new Func1<Cursor, Author>() {
                     @Override
-                    public Ribot call(Cursor cursor) {
-                        return Ribot.create(Db.RibotProfileTable.parseCursor(cursor));
+                    public Author call(Cursor cursor) {
+                        return Author.create(Db.RibotProfileTable.parseCursor(cursor).name(),
+                                Db.RibotProfileTable.parseCursor(cursor).url());
                     }
                 });
     }

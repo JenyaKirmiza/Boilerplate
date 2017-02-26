@@ -7,6 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.jenyakirmiza.boilerplate.R;
+import com.jenyakirmiza.boilerplate.data.model.Author;
+import com.jenyakirmiza.boilerplate.ui.base.BaseActivity;
+import com.jenyakirmiza.boilerplate.util.DialogFactory;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -14,11 +19,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.jenyakirmiza.boilerplate.R;
-import com.jenyakirmiza.boilerplate.data.SyncService;
-import com.jenyakirmiza.boilerplate.data.model.Ribot;
-import com.jenyakirmiza.boilerplate.ui.base.BaseActivity;
-import com.jenyakirmiza.boilerplate.util.DialogFactory;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -51,11 +51,15 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mRecyclerView.setAdapter(mRibotsAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMainPresenter.attachView(this);
+
+
+
+       /* if(!mMainPresenter.isInitialized()){
+            startService(SyncService.getStartIntent(this));
+        }*/
+
         mMainPresenter.loadRibots();
 
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            startService(SyncService.getStartIntent(this));
-        }
     }
 
     @Override
@@ -68,7 +72,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     /***** MVP View methods implementation *****/
 
     @Override
-    public void showRibots(List<Ribot> ribots) {
+    public void showRibots(List<Author> ribots) {
         mRibotsAdapter.setRibots(ribots);
         mRibotsAdapter.notifyDataSetChanged();
     }
@@ -81,7 +85,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Override
     public void showRibotsEmpty() {
-        mRibotsAdapter.setRibots(Collections.<Ribot>emptyList());
+        mRibotsAdapter.setRibots(Collections.<Author>emptyList());
         mRibotsAdapter.notifyDataSetChanged();
         Toast.makeText(this, R.string.empty_ribots, Toast.LENGTH_LONG).show();
     }
